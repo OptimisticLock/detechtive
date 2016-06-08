@@ -1,0 +1,107 @@
+<h1>DeTECHtive</h1>
+<p>This Node app is a response to the coding challenge described <a href="https://www.dropbox.com/sh/8s21475f09ln6mr/AACdxSa7WqeLMuGYQn5t64W2a/Brilliant_DeTECHtive_Take_Home.pdf?dl=0">here</a>.</p>
+<h1>Installation and usage</h1>
+<p>Download and install Node.js (only tested under Node 6.2.1), then run one of the following:</p>
+<h3>1. Local Install</h3>
+<pre><code>npm install https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
+</code></pre>
+<p>To execute from command line:</p>
+<pre><code>./node_modules/.bin/detechtiveMain.js &lt;fileName&gt;
+</code></pre>
+<p>To call programmatially:</p>
+<p>val detechtive = require(&quot;detechtive&quot;)</p>
+<pre><code class="language-css">#button {
+	border: none;
+}
+</code></pre>
+<pre><code class="language-javascript">var timelines = [[&quot;the&quot;, &quot;quick&quot;]]
+</code></pre>
+<h3>2. Global Install</h3>
+<p>(you may need root)</p>
+<pre><code>npm install -g https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
+</code></pre>
+<p>To execute:</p>
+<pre><code>detechtive &lt;fileName&gt;
+</code></pre>
+<p>To uninstall (you may need root):</p>
+<pre><code>npm uninstall -g detechtive
+</code></pre>
+<h1>Testing</h1>
+<pre><code>npm test
+</code></pre>
+<h1>About My Solution</h1>
+<h1>A YAGNI disclaimer</h1>
+<p>In real life, my first question would be: does my use case warrant
+careful optimization, or would a slow,
+but easily readable and maintainable solution suffice?</p>
+<p>Some real life use cases call for careful optimization, for example, a DNA sequencing app
+(which would be very similar to this one). Many more don't.</p>
+<p>EDIT: after discussing with the review team, turned out that this should have been my first
+question for the challenge as well :-)</p>
+<h1>Algorithm</h1>
+<p>The app does the following:</p>
+<ol>
+<li>
+<p>Convert the timelines into an adjacency matrix of events (a DAG).</p>
+</li>
+<li>
+<p>Calculate the transitive reduction for the matrix, thus eliminating all short
+paths (e1, e2) for which an alternative longer path (e1, .. ei... e2) exists.</p>
+</li>
+<li>
+<p>Convert the transitive reduction graph back to the timelines.</p>
+</li>
+</ol>
+<h3>Time complexity</h3>
+<p>When done right (and I stopped short of implementing it right due to time constraints), the worst case computational complexity can be as low as O(n^2.3729)
+(source: https://en.wikipedia.org/wiki/Transitive_reduction#Computational_complexity)
+where n is the number of unique events.</p>
+<p>It gets better: given that our input data is most likely very &quot;sparce&quot;
+(meaning that for all couples of events (e1, e2),  e1 is not often immediately followed
+by e2 in any timeline), the computational complexity would as low as O(n * m) where n is the number
+of unique events and m is the number of unique couples of events (e1, e2) described above. Again,
+that assumes correct application of graph theory from the reference in the above link.</p>
+<p>In real life, I'd just plug in many of the many 3rd party graph libraries.</p>
+<h1>Node</h1>
+<p>For this challenge, I wanted to experiment with writing
+computation-intensive code in Node, something I had not done
+before, so please be kind ;-)</p>
+<h1>Roadmap</h1>
+<h2>Check the input data for validity</h2>
+<p>Right now, we assume input data is valid, for instance that it has no cycles.</p>
+<h2>Tips to improve performance</h2>
+<h3>Dence vs. sparse graphs</h3>
+<p>If performance/footprint is important, consider replacing dense DAG with
+a sparse one. This use case probably has sparse input data,
+i.e. not many events are adjacent. Efficient algorithms exist to
+optimize for this case.</p>
+<h2>Performance considerations specific to V8/Node</h2>
+<h3>Javascript arrays</h3>
+<p>Javascript can sometimes (not always) store arrays as a hashmap from
+keys to values. Which works great for sparse arrays. If a dense array
+is desired, here are the tips to
+accomplish that (caution, old source): https://www.youtube.com/watch?feature=player_detailpage&amp;v=XAqIpGU8ZZk#t=994s
+The implication on performance can be very significant.</p>
+<p>Also, consider using TypedArray.</p>
+<h1>Roadmap</h1>
+<p>(In addition to all the numerous TODOs in the source)</p>
+<ul>
+<li>
+<p>Explore a solution involving topological sorting. That's probably what I would have tried now if I did this challenge
+from scratch.</p>
+</li>
+<li>
+<p>Need much better test coverage. Not just testing of one method.</p>
+</li>
+<li>
+<p>Profiling. This can probably perform much better after small tweaks.</p>
+</li>
+<li>
+<p>Finish the conversion to OO or undo it. OO was a bit cumbersome to write in ES5, which may be a part of the reason why it's not a major part of the culture.
+This is my first experiment with OO in ES6, mostly I wanted to get a feel of how good or bad it is. In any case, I am
+not happy with leaving the code half OO.</p>
+</li>
+<li>
+<p>Replace <code>var</code> with <code>let</code> and <code>const</code>.</p>
+</li>
+</ul>

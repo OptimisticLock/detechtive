@@ -1,34 +1,58 @@
 # DeTECHtive
 
-This is Irina Rapoport's answer a coding challenge described [here](Brilliant_DeTECHtive_Take_Home.pdf)
+This Node app is a response to the coding challenge described [here](https://www.dropbox.com/sh/8s21475f09ln6mr/AACdxSa7WqeLMuGYQn5t64W2a/Brilliant_DeTECHtive_Take_Home.pdf?dl=0).
 
-Installation
-============
+# Installation and usage
 
-1. Install Node (tested under 6.2.1)
+Download and install Node.js (only tested under Node 6.2.1), then run one of the following:
 
-2. Contact Irina with your email address to be added to the private Github repo,
-or login to github as user tempUser@optimisticlock.com, password 3435SFH#$
+### 1. Local Install
 
-3. `npm install -g https://github.com/OptimisticLock/usermindFirst.git`
+    npm install https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
 
-(you may need root).
+To execute from command line:
+
+    ./node_modules/.bin/detechtiveMain.js <fileName>
+
+To call programmatially:
+
+val detechtive = require("detechtive")
 
 
-Running the app
-===============
-`detechtive <input file>`
+```css
+#button {
+	border: none;
+}
+```
 
-Uninstall
-=========
-`npm uninstall -g detechtive`
+
+```javascript
+var timelines = [["the", "quick"]]
+```
+
+
+
+
+### 2. Global Install
 
 (you may need root)
+
+    npm install -g https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
+
+To execute:
+
+    detechtive <fileName>
+
+To uninstall (you may need root):
+
+    npm uninstall -g detechtive
+
+
 
 Testing
 =======
 
-`npm test`
+    npm test
 
 About My Solution
 =================
