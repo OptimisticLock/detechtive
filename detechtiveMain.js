@@ -55,8 +55,8 @@ fs.readFile(filename, 'utf8', (err, contents) => {
     }
 
     var timelines = JSON.parse(contents)
-    var merged = detechtive.merge(timelines)
-    console.log(toString(timelines))
+    var mergedTimelines = detechtive.merge(timelines)
+    console.log(toString(mergedTimelines))
 
 })
 
