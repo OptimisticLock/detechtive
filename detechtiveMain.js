@@ -56,6 +56,26 @@ fs.readFile(filename, 'utf8', (err, contents) => {
 
     var timelines = JSON.parse(contents)
     var merged = detechtive.merge(timelines)
-    console.log(JSON.stringify(merged))
+    console.log(toString(timelines))
 
 })
+
+// TODO what if it's very long?
+/**
+ * Convert timelines to string. TODO: can be too big, use stream instead
+ * @param timelines
+ * @returns {string}
+ */
+function toString(timelines) {
+
+    // Could just JSON.stringify() the entire timelines object, but it would be harder to get whitespaces right.
+
+    var result = "[\n"
+
+    for (var timeline of timelines)
+        result += JSON.stringify(timeline) + "\n"
+
+    result += "]"
+
+    return result
+}

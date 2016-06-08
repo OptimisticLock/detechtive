@@ -10,8 +10,9 @@
 
 
 module.exports = {
-    toTimelines,   // convert timelines to graph
+    toTimelines,    // convert timelines to graph
     toGraph        // convert graph to timelines
+
 }
 
 const assert = require('assert')
@@ -178,23 +179,4 @@ function toGraph(timelines) {
     return graph
 }
 
-// TODO what if it's very long?
-/**
- * Convert timelines to string. TODO: can be too big, use stream instead
- * @param timelines
- * @returns {string}
- */
-function toString(timelines) {
-
-    // Could just JSON.stringify() the entire timelines object, but it would be harder to get whitespaces right.
-
-    var result = "[\n"
-
-    for (var timeline of timelines)
-        result += JSON.stringify(timeline) + "\n"
-
-    result += "]"
-
-    return result
-}
 
