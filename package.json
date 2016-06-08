@@ -1,11 +1,32 @@
 {
   "name": "detechtive",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.1",
+  "description": "A coding challenge",
+  "main": "./detechtive.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "keywords": ["detechtive", "challenge"],
+  "engines": {"node": ">=6.1.0"},
+  "private": true,
+  "bin": "./detechtive.js",
+  "author": "Irina Rapoport",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3"
+  },
+
+  "scripts": {
+    "start": "node ./detechtive.js",
+    "test": "mocha",
+    "jsdoc" : "jsdoc .; open out/index.html",
+    "markdown" : "markdown-it README.md  > README.html && open README.html",
+    "tarball" : "tar czf detechtive.tar.gz ."
+  },
+
+  "repository" :
+  { "type" : "git"
+  , "url" : "https://github.com/OptimisticLock/detechtive.git"
+  }
 }
