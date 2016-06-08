@@ -9,7 +9,7 @@
   "keywords": ["detechtive", "challenge"],
   "engines": {"node": ">=6.1.0"},
   "private": true,
-  "bin": "./detechtive.js",
+  "bin": "./detechtiveMain.js",
   "author": "Irina Rapoport",
   "license": "ISC",
   "devDependencies": {
@@ -18,7 +18,7 @@
   },
 
   "scripts": {
-    "start": "node ./detechtive.js",
+    "start": "node ./detechtiveMain.js",
     "test": "mocha",
     "jsdoc" : "jsdoc .; open out/index.html",
     "markdown" : "markdown-it README.md  > README.html && open README.html",
