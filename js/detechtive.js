@@ -6,16 +6,16 @@
 
 
 
-module.exports = {mergeTimelines}
+module.exports = {merge}
 
 const Timelines = require("./timelines")
 
 /**
  * Given the set of original timelines, merges them as per the spec.
- * @param timelines original timelines
+ * @param timelines original timelines, an array of arrays as descrbed in the spec.
  * @returns {timelines}     merged timelines
  */
-function mergeTimelines(timelines) {
+function merge(timelines) {
 
     // TODO check preconditions
 

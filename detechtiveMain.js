@@ -12,14 +12,18 @@
 
 
 
-var detechtive = require("./detechtive")
+var detechtive = require("./js/detechtive")
 var fs = require('fs')
 
 
 // Only use this in a standalone app, not in a module
 process.on('uncaughtException', function(err) {
-    // handle the error safely
-    console.log("****Uncaught exception", err)
+
+    console.log(err.message)
+
+    if (err.showStackTrace !== false)
+        console.log(err.stack)
+
     const ERROR = 1
     process.exit(ERROR)
 })
@@ -31,11 +35,13 @@ process.on('uncaughtException', function(err) {
 
 var argv = process.argv
 var filename = argv[2] || ""
+const USAGE = "usage: detective [file]"
 
 // Is file name omitted or incorrect?
 if (filename.length === 0 || filename[0] === '-') {
-    usage()
-    throw new Error("Usage")
+    const error = new Error(USAGE)
+    error.showStackTrace = false
+    throw error
 }
 
 
@@ -44,19 +50,12 @@ fs.readFile(filename, 'utf8', (err, contents) => {
 
     // TODO better error handling
     if (err) {
-        console.log(err.message)
+        err.showStackTrace = false
         throw err
     }
 
     var timelines = JSON.parse(contents)
     var merged = detechtive.merge(timelines)
+    console.log(JSON.stringify(merged))
 
 })
-
-
-/**
- * Print usage to standard output
- */
-function usage() {
-    console.log('usage: detective [file]')
-}
