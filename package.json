@@ -16,13 +16,14 @@
   "license": "ISC",
   "devDependencies": {
     "chai": "^3.5.0",
+    "jsdoc": "^3.4.0",
     "markdown-it": "^6.0.5",
     "mocha": "^2.5.3"
   },
   "scripts": {
     "start": "node ./detechtiveMain.js",
     "test": "mocha",
-    "jsdoc": "jsdoc .; open out/index.html",
+    "jsdoc": "jsdoc -r .; open out/index.html",
     "markdown": "markdown-it README.md  > README.html && open README.html",
     "tarball": "tar czf detechtive.tar.gz ."
   },

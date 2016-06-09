@@ -6,11 +6,9 @@
  * @module detechtiveMain
  */
 
- /* A standalone utility. Reads and timelines from json file specified in the first command line argument.
- * Prints modified timelines to standard output.
+ /* A standalone utility. Reads an array of timelines from json file specified in the first command line argument.
+ *  Attempts to merge the timelines. Prints modified timelines to standard output.
  */
-
-
 
 var detechtive = require("./js/detechtive")
 var fs = require('fs')
@@ -48,7 +46,7 @@ if (filename.length === 0 || filename[0] === '-') {
 // TODO: this loads the whole json file into memory at once. Use stream instead.
 fs.readFile(filename, 'utf8', (err, contents) => {
 
-    // TODO better error handling
+    // TODO better error handling for most common errors: file not found, no access privilege, etc.
     if (err) {
         err.showStackTrace = false
         throw err

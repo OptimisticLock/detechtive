@@ -2,181 +2,185 @@
 
 I wrote this Node app as an answer to the coding challenge described [here](https://www.dropbox.com/sh/8s21475f09ln6mr/AACdxSa7WqeLMuGYQn5t64W2a/Brilliant_DeTECHtive_Take_Home.pdf?dl=0).
 
-## Installation and usage
+### Installation and usage
 
-Download and install Node.js (only tested under Node 6.2.1), then run one of the following:
+Download and install Node.js then run one of the following:
 
 #### 1. Local Install
 
-    npm install https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
+To install:
 
-To execute from command line:
+    git clone https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
+    cd detechtive
+    npm install
 
-    ./node_modules/.bin/detechtiveMain.js <fileName>
-
-To call programmatically:
-```javascript
-
-let detechtive = require("detechtive")
-
-let timelines = [["fight", "gunshot", "fleeing"],
-                 ["gunshot", "falling", "fleeing"]
-                ]
-
-var result = detechtive.merge(timelines)
-```
+To run:
 
 
-### 2. Global Install
+    ./detechtiveMain.js <fileName>
 
-(you may need root)
 
-    npm install -g https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
+For example,
 
-To execute:
+
+    ./detechtiveMain.js test/input/input1.json
+
+
+To test:
+
+    npm test
+
+
+
+#### 2. Global Install
+
+To install:
+
+    [sudo] npm install -g https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
+
+To run:
 
     detechtive <fileName>
 
-To uninstall (you may need root):
+To uninstall:
 
     npm uninstall -g detechtive
 
 
-# Testing
 
-    npm test
 
-# About My Solution
+### Compatibility
 
-This sort of grew out of control. This being a challenge, I did not want to just brute-force
-a solution, which is what I would have normally done in real life unless I had a good reason not to,
-because YAGNI, _premature optimization is the root of all evil_, etc. I imagined this is a solution
-that is meant to scale, e.g. a DNA sequencing app or some such. So I went for low algorithmic
-complexity. In retrospect, perhaps I should not have.
+Tested under Node 6.2.1 only.
+
+
+## About this solution
+
+This grew a bit out of control. This being a challenge, I did not want to just write a brute-force
+solution, which is what I would have probably done in a real life app, because YAGNI.
+I thought this calls for a solution that is meant to scale, e.g. a DNA sequencing app or some such.
+So I went for low algorithmic complexity. In retrospect, I think I should have asked the review team
+about the scalability/complexity requirements first.
 
 To accomplish the low algorithmic complexity goal, I converted the timelines into a directed acyclic graph
 of events, then I calculated the graph's [transitive reduction](https://en.wikipedia.org/wiki/Transitive_reduction)
 (thus eliminating all the unnecessary short paths between that needed to be eliminated), then converted
 the resulting graph back to timelines.
 
-In doing that, I encountered two problems.
+In doing that, I encountered these problems:
 
-###1. Computational complexity
+### 1. Computational complexity
 
 In order to calculate transitive reduction, I first calculated
-[transitive closure](https://en.wikipedia.org/wiki/Transitive_closure). I intended to one of the several existing fast
-alogirthms for that (listed at the above link), but that's when I first realized I am really running out
-of time. So I cheated and used the very slow, but simple [Floyd-Warshall](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm)
-algorithm, which has the unnecessarily high complexity of O(V^3), thus defeating the whole purpose.
+[transitive closure](https://en.wikipedia.org/wiki/Transitive_closure). I intended to use one of the several existing fast
+alogirthms for that (listed at the above link), but did not have the time. So I cheated and used a very
+slow, but simple [Floyd-Warshall](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm)
+algorithm, which is meant for dense graphs and has the unnecessarily high complexity of O(V^3), thus defeating the whole purpose. Still,
+it's a step in the right direction. In real life, I'd plug in an existing graph library instead of
+reinventing the wheel.
 
-In real life though, if a fast algorithm was desired, that would have been a step in the right direction,
-especially given that there are plenty of graph libraries to use, so no need to reinvent the wheel.
 
-###2. Node.js
+### 2. Node.js
 
 For this challenge, I wanted to try something new. I had never used Node for computation-intensive stuff,
-though I had heard other people have done that fairly successfully. I wanted to experiment with that. I learned
-a lot about Node/V8 in the process, e.g. its different ways of internal representation for dense vs. sparse arrays,
-profiling tools, etc. It would have been a lot easier to develop this in Python, but curiocity killed the cat.
+though I had heard of success stories. I wanted to experiment with Node. In
+retrospect, I should have used a different language.
 
-TODO say that Node is single-threaded
+### 3. A known bug
 
-###3. A known bug.
+This is the worst part, obviously. I have a unit test that fails, producing a redundant timeline, and there is no easy
+fix without changing the algorithm (the final part of the algorithm that converts graphs to timelines).
 
-This is the worst part, obviously. I have a unit test that fails, and there is no easy fix without
-changing the algorithm (precizely, the part that converts graphs to timelines).
+For what it's worth, the judge probably won't throw away the case just because it's a bit redundant ;-) Nevertheless,
+the requirements do clearly say:
 
-
-
-# A YAGNI disclaimer
-
-In real life, my first question would be: does my use case warrant
-careful optimization, or would a slow,
-but easily readable and maintainable solution suffice?
-
-Some real life use cases call for careful optimization, for example, a DNA sequencing app
-(which would be very similar to this one). Many more don't.
-
-EDIT: after discussing with the review team, turned out that this should have been my first
-question for the challenge as well :-)
+> Write a program that, given multiple arrays (eyewitness accounts), produces a **minimal** set of absolutely ordered,
+maximally long arrays (timelines) to give to the prosecution.
 
 
-# Algorithm
+Here is this failing unit test:
 
-The app does the following:
+````javascript
+       /**  FAIL! The result should be either
+         *        [["A1", "B", "C2"], ["A2", "B", "C1"]]
+         * or (preferably)
+         *        [["A1", "B", "C1"], ["A2", "B", "C2"]],
+         *
+         * Instead, it's  [["A1", "B", "C1"], ["A1", "B", "C2"], ["A2", "B", "C1"]]. Bummer!
+         */
 
-1. Convert the timelines into an adjacency matrix of events (a DAG).
+        it("Should produce minimum of timelines", function() {
+            var timelines = [["A1", "B", "C1"],
+                             ["A2", "B", "C2"]]
+            var result = detechtive.merge(timelines)
+            result.should.have.length(2, `Too many or too few timelines: ${JSON.stringify(result)}`)
+        })
+````
 
-2. Calculate the transitive reduction for the matrix, thus eliminating all short
-paths (e1, e2) for which an alternative longer path (e1, .. ei... e2) exists.
 
-3. Convert the transitive reduction graph back to the timelines.
+## Time complexity
 
-
-### Time complexity
-
-When done right (and I stopped short of implementing it right due to time constraints), the worst case computational complexity can be as low as O(n^2.3729)
-(source: https://en.wikipedia.org/wiki/Transitive_reduction#Computational_complexity)
+When done right (and this is not done right, see above), the worst case computational complexity can
+be as low as [O(n^2.3729)](https://en.wikipedia.org/wiki/Transitive_reduction#Computational_complexity)
 where n is the number of unique events.
 
 It gets better: given that our input data is most likely very "sparce"
-(meaning that for all couples of events (e1, e2),  e1 is not often immediately followed
-by e2 in any timeline), the computational complexity would as low as O(n * m) where n is the number
+(meaning that for all possible combinations of events (e1, e2), e1 is seldom immediately followed
+by e2), the computational complexity would be as low as O(n * m) where n is the number
 of unique events and m is the number of unique couples of events (e1, e2) described above. Again,
 that assumes correct application of graph theory from the reference in the above link.
 
-In real life, I'd just plug in many of the many 3rd party graph libraries.
+Currently, the complexity is O(V^3), thanks to the slow Floyd-Marshall algorithm.
+
+## Limitations
+Node's non-blocking, nearly-single-threaded nature means one can't use this package as a part of a system that needs
+to operate in real time, e.g. a webserver, if it's to crunch any significant amounts of data. At least, not directly. It needs to operate in a
+separate process, or it can be modified, e.g. to use webworker threads.
+
+## Roadmap
+
+### 1. Topological sorting
+
+Rewrite the whole thing from scratch. Explore an alternative solution involving
+[topological sorting](https://en.wikipedia.org/wiki/Topological_sorting). Do it in Python or Scala or another
+langauge that lends itself easily to this and has good libraries.
+
+That's what I
+would have tried now if I did this challenge from scratch. A topological search is both easy to implement and conceptualize
+and  fast to compute; the two metrics I am looking for, and would have fixed this failing unit test problem. Alas, no time.
+
+This is really the only important item on the roadmap, I could end it right there.
 
 
-
-# Node
-
-For this challenge, I wanted to experiment with writing 
-computation-intensive code in Node, something I had not done 
-before, so please be kind ;-)
-
-
-# Roadmap
-
-## Check the input data for validity
-
-Right now, we assume input data is valid, for instance that it has no cycles.
-
-
-## Tips to improve performance
-
-### Dence vs. sparse graphs
-
-If performance/footprint is important, consider replacing dense DAG with
-a sparse one. This use case probably has sparse input data,
-i.e. not many events are adjacent. Efficient algorithms exist to
-optimize for this case.
-
-## Performance considerations specific to V8/Node
-
-### Javascript arrays
+### 2. Javascript arrays
 Javascript can sometimes (not always) store arrays as a hashmap from 
 keys to values. Which works great for sparse arrays. If a dense array
-is desired, here are the tips to
-accomplish that (caution, old source): https://www.youtube.com/watch?feature=player_detailpage&v=XAqIpGU8ZZk#t=994s
-The implication on performance can be very significant.
+is desired, [here](https://www.youtube.com/watch?feature=player_detailpage&v=XAqIpGU8ZZk#t=994s)
+are good tips on how to accomplish that. The implication especially on memory footprint should be significant.
 
-Also, consider using TypedArray.
+Also, consider using `TypedArray`.
 
-# Roadmap
-(In addition to all the numerous TODOs in the source)
+### 3. TODOs
+Search the code base for "TODO". There is a lot.
 
-* Explore a solution involving topological sorting. That's probably what I would have tried now if I did this challenge
-from scratch.
+### 4. Testing
 
-* Need much better test coverage. Not just testing of one method.
+Needs much more tests written. Not just of one method.
 
-* Profiling. This can probably perform much better after small tweaks.
+### 5. Profiling
 
-* Finish the conversion to OO or undo it. OO was a bit cumbersome to write in ES5, which may be a part of the reason why it's not a major part of the culture.
-This is my first experiment with OO in ES6, mostly I wanted to get a feel of how good or bad it is. In any case, I am
-not happy with leaving the code half OO.
+I expect lots of surprises, this being Javascript.
 
-* Replace `var` with `let` and `const`.
+### 5. Object-oriented
+
+ES6 has added syntactic sugar that simplifies writing
+object-oriented code, and I wanted to experiment wtih that. I did not finish. `Graph.js` is object-oriented, `timelines.js`
+is not. The entire code base needs to either be object-oriented, or not. (Besides, `timelines.js` needs refactoring,
+it's way too verbose.)
+
+### 6. Migrate from ES5 to ES6
+
+Use `let`,  `const`, arrow functions, etc.
+
 
 

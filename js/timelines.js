@@ -39,6 +39,13 @@ function toTimelines(graph) {
     return mergedTimelines // TODO check standalone
 }
 
+/**
+ * TODO function too long
+ * TODO see if I can rewrite it with tail recursion.
+ * Looks like ES6 finally optimizes for it:
+ * http://benignbemine.github.io/2015/07/19/es6-tail-calls/
+ * V
+ */
 
 /**
  * A "private" recursive function converting a graph to an array of timelines
@@ -47,6 +54,8 @@ function toTimelines(graph) {
  * @param event     the id of the starting event
  * @param depth     the depth of the recursion
  */
+
+
 function toTimelines0(graph, timeline, event, depth) {
 
 
