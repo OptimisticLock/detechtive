@@ -90,6 +90,21 @@ describe('detechtive', function () {
         })
     })
 
+    describe ("Quick brown fox tests", function() {
+
+
+        let timelines = [["the", "quick"],
+            ["quick", "brown", "fox"],
+            ["the", "fox", "jumped", "over"],
+            ["over", "a", "dog"],
+            ["over", "a", "lazy"],
+            ["over", "lazy", "dog"]
+        ]
+
+        let result = detechtive.merge(timelines)
+        result.should.deep.equal([["the", "quick", "brown", "fox", "jumped", "over", "a", "lazy", "dog"]])
+    })
+
     describe("Additional tests", function () {
 
         // The requirement don't say anything about possibility of cycles. It's important to know whether the
@@ -126,8 +141,22 @@ describe('detechtive', function () {
 
         })
 
+        /**  FAIL! The result should be either
+         *        [["A1", "B", "C2"], ["A2", "B", "C1"]]
+         * or (preferably)
+         *        [["A1", "B", "C1"], ["A2", "B", "C2"]],
+         *
+         * Instead, it's  [["A1", "B", "C1"], ["A1", "B", "C2"], ["A2", "B", "C1"]]. Bummer!
+         */
 
+        it("Should produce minimum of timelines", function() {
+            var timelines = [["A1", "B", "C1"],
+                             ["A2", "B", "C2"]]
+            var result = detechtive.merge(timelines)
+            result.should.have.length(2, `Too many or too few timelines: ${JSON.stringify(result)}`)
+        })
     })
+
 
     // Skip those tests most of the time, because they are slow
     describe.skip("Very large", function() {

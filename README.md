@@ -1,12 +1,12 @@
 # DeTECHtive
 
-This Node app is a response to the coding challenge described [here](https://www.dropbox.com/sh/8s21475f09ln6mr/AACdxSa7WqeLMuGYQn5t64W2a/Brilliant_DeTECHtive_Take_Home.pdf?dl=0).
+I wrote this Node app as an answer to the coding challenge described [here](https://www.dropbox.com/sh/8s21475f09ln6mr/AACdxSa7WqeLMuGYQn5t64W2a/Brilliant_DeTECHtive_Take_Home.pdf?dl=0).
 
-# Installation and usage
+## Installation and usage
 
 Download and install Node.js (only tested under Node 6.2.1), then run one of the following:
 
-### 1. Local Install
+#### 1. Local Install
 
     npm install https://GuestOptimisticLock:BeMyGuest360@github.com/OptimisticLock/detechtive.git
 
@@ -14,23 +14,17 @@ To execute from command line:
 
     ./node_modules/.bin/detechtiveMain.js <fileName>
 
-To call programmatially:
-
-val detechtive = require("detechtive")
-
-
-```css
-#button {
-	border: none;
-}
-```
-
-
+To call programmatically:
 ```javascript
-var timelines = [["the", "quick"]]
+
+let detechtive = require("detechtive")
+
+let timelines = [["fight", "gunshot", "fleeing"],
+                 ["gunshot", "falling", "fleeing"]
+                ]
+
+var result = detechtive.merge(timelines)
 ```
-
-
 
 
 ### 2. Global Install
@@ -48,14 +42,51 @@ To uninstall (you may need root):
     npm uninstall -g detechtive
 
 
-
-Testing
-=======
+# Testing
 
     npm test
 
-About My Solution
-=================
+# About My Solution
+
+This sort of grew out of control. This being a challenge, I did not want to just brute-force
+a solution, which is what I would have normally done in real life unless I had a good reason not to,
+because YAGNI, _premature optimization is the root of all evil_, etc. I imagined this is a solution
+that is meant to scale, e.g. a DNA sequencing app or some such. So I went for low algorithmic
+complexity. In retrospect, perhaps I should not have.
+
+To accomplish the low algorithmic complexity goal, I converted the timelines into a directed acyclic graph
+of events, then I calculated the graph's [transitive reduction](https://en.wikipedia.org/wiki/Transitive_reduction)
+(thus eliminating all the unnecessary short paths between that needed to be eliminated), then converted
+the resulting graph back to timelines.
+
+In doing that, I encountered two problems.
+
+###1. Computational complexity
+
+In order to calculate transitive reduction, I first calculated
+[transitive closure](https://en.wikipedia.org/wiki/Transitive_closure). I intended to one of the several existing fast
+alogirthms for that (listed at the above link), but that's when I first realized I am really running out
+of time. So I cheated and used the very slow, but simple [Floyd-Warshall](https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm)
+algorithm, which has the unnecessarily high complexity of O(V^3), thus defeating the whole purpose.
+
+In real life though, if a fast algorithm was desired, that would have been a step in the right direction,
+especially given that there are plenty of graph libraries to use, so no need to reinvent the wheel.
+
+###2. Node.js
+
+For this challenge, I wanted to try something new. I had never used Node for computation-intensive stuff,
+though I had heard other people have done that fairly successfully. I wanted to experiment with that. I learned
+a lot about Node/V8 in the process, e.g. its different ways of internal representation for dense vs. sparse arrays,
+profiling tools, etc. It would have been a lot easier to develop this in Python, but curiocity killed the cat.
+
+TODO say that Node is single-threaded
+
+###3. A known bug.
+
+This is the worst part, obviously. I have a unit test that fails, and there is no easy fix without
+changing the algorithm (precizely, the part that converts graphs to timelines).
+
+
 
 # A YAGNI disclaimer
 
